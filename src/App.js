@@ -70,14 +70,18 @@ class App extends Component {
 
   ItemClicked = (park) => {
   /* ItemClicked, show infoWinfow with correct park */
-    if (!this.state.showingInfoWindow) {
-      var sidebar = document.getElementById('sidebar');
-      var infoWindow = document.getElementById('infoWindow');
-      sidebar.style.width = '0';
-      setTimeout(() => {
-        (window.screen.width > 400)? infoWindow.style.width = '400px' : infoWindow.style.width = '100%';
-      }, 600)
+    var sidebar = document.getElementById('sidebar');
+    var infoWindow = document.getElementById('infoWindow');
+
+    if ((sidebar.style.width == '0px') && (infoWindow.style.width == '0px')) {
+      var menu = document.getElementById('menu');
+      menu.classList.toggle("change");
     }
+
+    sidebar.style.width = '0';
+    setTimeout(() => {
+      (window.screen.width > 400)? infoWindow.style.width = '400px' : infoWindow.style.width = '100%';
+    }, 600)
 
     this.state.parks.forEach((thePark) => {
       thePark.marker.setAnimation(null);
@@ -246,6 +250,23 @@ class App extends Component {
     })
   }
 
+//----------------
+
+  menuToggler = () => {
+  /* Toggle if Sidebar/Infowindow is shown */
+    var menu = document.getElementById('menu');
+    menu.classList.toggle("change");
+    var sidebar = document.getElementById('sidebar');
+    var infoWindow = document.getElementById('infoWindow');
+
+    if (this.state.showingInfoWindow) {
+      (infoWindow.style.width == '0px') ? (window.screen.width > 400)? infoWindow.style.width = '400px' : infoWindow.style.width = '100%' : infoWindow.style.width = '0px';
+    }
+    else {
+      (sidebar.style.width == '0px') ? (window.screen.width > 400)? sidebar.style.width = '400px' : sidebar.style.width = '100%' : sidebar.style.width = '0px';
+    }
+  }
+
 /*******************************************
 * Render part
 *******************************************/
@@ -254,7 +275,7 @@ class App extends Component {
       <div className="App">
         <ParkHeader 
           //functions
-          showingInfoWindow={this.state.showingInfoWindow}
+          onMenuToggler={this.menuToggler}
         />
 
         <SideBar
