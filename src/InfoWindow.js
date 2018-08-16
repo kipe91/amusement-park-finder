@@ -35,32 +35,32 @@ class InfoWindow extends Component {
           <p className="unsplashFoto">Photo from <i>unsplash.com</i></p>
         </div>
         <div className="infoWindow-info">
-          <h2>Park information:</h2>
+          <h2 tabIndex="0">Park information:</h2>
           <p className="information">
-            <span><strong>Name: </strong><i>{this.props.selectedPlace.name}</i></span><br />
-            <span><strong>Adress: </strong><i>{this.props.selectedPlace.formatted_address}</i></span><br />
-            <span><strong>Phone: </strong><i>{this.props.selectedPlace.formatted_phone_number}</i></span><br />
-            <span><strong>Website: </strong><a href={this.props.selectedPlace.website} target="_blank">{this.props.selectedPlace.website}</a></span><br />
-            <span><strong>Total rating: </strong><i>{this.props.selectedPlace.rating}</i></span>
+            <span tabIndex="0"><strong>Name: </strong><i>{this.props.selectedPlace.name}</i></span><br />
+            <span tabIndex="0"><strong>Adress: </strong><i>{this.props.selectedPlace.formatted_address}</i></span><br />
+            <span tabIndex="0"><strong>Phone: </strong><i>{this.props.selectedPlace.formatted_phone_number}</i></span><br />
+            <span tabIndex="0"><strong>Website: </strong><a href={this.props.selectedPlace.website} target="_blank">{this.props.selectedPlace.website}</a></span><br />
+            <span tabIndex="0"><strong>Total rating: </strong><i>{this.props.selectedPlace.rating}</i></span>
           </p>
-          <h2>Opening hours: </h2>
+          <h2 tabIndex="0">Opening hours: </h2>
             {openTimes ? (
               <ul className="timeList">
                 {this.props.selectedPlace.opening_hours.weekday_text.map((day, index) => {
                   return (
-                    <li key={index}> {day} </li>
+                    <li tabIndex="0" key={index}> {day} </li>
                   )
                 })}
               </ul>
             ) : (
               <ul className="timeList"><li><i>Sorry, no times available here</i></li></ul>
             )}
-          <h2>Reviews:</h2>
+          <h2 tabIndex="0">Reviews:</h2>
           {reviews ? (
             <ul className="reviewList">
               {this.props.selectedPlace.reviews.map((review, index) => {
                 return (
-                  <li key={index}>
+                  <li tabIndex="0" key={index}>
                     <div className="reviewInfo">
                       <span className="reviewName">- {review.author_name}</span><br />
                       <span className="reviewRating">- {review.rating} star(s)</span>

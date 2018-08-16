@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import imgMarked from './utils/hover.marker-icon.png';
 import MapContainer from './GoogleMap';
 import SideBar from './Sidebar';
 import InfoWindow from './InfoWindow';
@@ -16,11 +17,11 @@ class App extends Component {
       //lat: 58.63064,
       //lng: 12.29843
       /*Germany*/
-      lat: 50.736000,
-      lng: 10.237134
-      /*USA*/
-      //lat: 26.040674,
-      //lng: -80.233292
+      //lat: 50.736000,
+      //lng: 10.237134
+      /*USA, Miami*/
+      lat: 26.040674,
+      lng: -80.233292
     },
     parks: [],
     showingInfoWindow: false,
@@ -77,6 +78,12 @@ class App extends Component {
         (window.screen.width > 400)? infoWindow.style.width = '400px' : infoWindow.style.width = '100%';
       }, 600)
     }
+
+    this.state.parks.forEach((thePark) => {
+      thePark.marker.setAnimation(null);
+    })
+    park.marker.setAnimation(window.google.maps.Animation.BOUNCE);
+
     this.setState({
       selectedPlace: park,
       showingInfoWindow: true
@@ -110,6 +117,14 @@ class App extends Component {
 
 //----------------
 
+  hideCurrentParks = () => {
+    this.state.parks.forEach((park) => {
+      park.marker.setMap(null);
+    })
+  }
+
+//----------------
+
   getParks = () => {
   /* Find parks in selected area */
     var thiss = this;
@@ -119,6 +134,8 @@ class App extends Component {
     };
     this.setState({getInfoRequest: false});
     this.setState({getImageRequest: false});
+
+    this.hideCurrentParks();
 
     var service = new window.google.maps.places.PlacesService(this.state.map);
     service.textSearch(placeRequest, callback);
@@ -136,6 +153,7 @@ class App extends Component {
         }
         thiss.getImages(memory);
         thiss.getFullInfo(memory);
+        thiss.createMarker(memory);
       }
 
       updateState();
@@ -199,9 +217,33 @@ class App extends Component {
 
 //----------------
 
+  createMarker = (parks) => {
+    parks.forEach((park) => {
+      park.marker = new window.google.maps.Marker({
+        title: park.name,
+        map: this.state.map,
+        position: park.geometry.location,
+        animation: window.google.maps.Animation.DROP
+      });
+      
+      park.marker.addListener('mouseover', () => park.marker.setIcon(imgMarked));
+      park.marker.addListener('mouseout', () => park.marker.setIcon(null));
+      park.marker.addListener('click', () => this.ItemClicked(park));
+    })
+  }
+
+//----------------
+
   updateQuery = (search) => {
   /* Updates park filtering */
     this.setState({query: search});
+    this.state.parks.forEach((park) => {
+      if (park.name.toUpperCase().indexOf(search) > -1) {
+        park.marker.setMap(this.state.map);
+      } else {
+        park.marker.setMap(null);
+      }
+    })
   }
 
 /*******************************************
@@ -236,13 +278,7 @@ class App extends Component {
         <MapContainer
           //postition
           userLocation={this.state.userLocation}
-          //parks
-          allParks={this.state.parks}
-          query={this.state.query}
-          //infoWindow
-          showingInfoWindow={this.state.showingInfoWindow}
           //functions
-          markerClick={this.ItemClicked}
           onSetMap={this.setMap}
         />
       </div>
