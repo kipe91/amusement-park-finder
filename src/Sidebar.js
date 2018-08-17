@@ -76,8 +76,7 @@ class SideBar extends Component {
           <p className="sidebar-list-p">Parks in area:</p>
           <input id="searchField" className="searchField" onChange={(e) => this.handleInput(e.target.value)} type="search" placeholder="Search by name.." />
           <ul id="sidebar-list" ref="sidebarList" className="sidebar-list">
-            {this.props.allParks.sort(sortBy('rating'))
-              .reverse()
+            {this.props.allParks.sort(sortBy('-rating'))
               .filter(park => park.name.toUpperCase().indexOf(this.props.query) > -1)
               .map((park, index) => {
                 return (

@@ -170,10 +170,11 @@ class App extends Component {
 
       updateState();
       function updateState() {
+        //check if info and image request has been sent, else check again in 0.5s
         if (thiss.state.getInfoRequest && thiss.state.getImageRequest) {
-          console.log(memory);
           thiss.setState({ parks: memory });
           setTimeout(() => {
+            //refresh with fetch info (could set some loop here too, but nah..)
             thiss.setState({ parks: thiss.state.parks });
           }, 1000)
         } else {
