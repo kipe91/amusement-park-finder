@@ -92,6 +92,10 @@ class App extends Component {
       selectedPlace: park,
       showingInfoWindow: true
     })
+
+    setTimeout(() => {
+      this.tabFocus();
+    }, 800)
   }
 
 //----------------
@@ -109,6 +113,10 @@ class App extends Component {
     this.setState({
       showingInfoWindow: false
     })
+
+    setTimeout(() => {
+      this.tabFocus();
+    }, 800)
   }
 
 //----------------
@@ -264,6 +272,106 @@ class App extends Component {
     }
     else {
       (sidebar.style.width == '0px') ? (window.screen.width > 400)? sidebar.style.width = '400px' : sidebar.style.width = '100%' : sidebar.style.width = '0px';
+    }
+    setTimeout(() => {
+      this.tabFocus();
+    }, 800)
+  }
+
+//----------------
+
+  tabFocus = () => {
+  /* Really shit code to make sure tabbing stays corrent. */
+    var sidebar = document.getElementById('sidebar');
+    var infoWindow = document.getElementById('infoWindow');
+    var i,j,k,l;
+
+    var locationField = document.getElementById('locationField');
+    var locationFieldBtn = document.getElementById('locationFieldBtn');
+    var locationFindBtn = document.getElementById('locationFindBtn');
+    var searchField = document.getElementById('searchField');
+    var sidebarListItems = document.getElementsByClassName('sidebarListItem');
+
+    var backBtn = document.getElementById('backBtn');
+    var parkInfoH2 = document.getElementById('parkInfoH2');
+    var openHoursH2 = document.getElementById('openHoursH2');
+    var reviewsH2 = document.getElementById('reviewsH2');
+    var infoSpans = document.getElementsByClassName('infoSpan');
+    var dayTimes = document.getElementsByClassName('dayTimes');
+    var reviewItems = document.getElementsByClassName('reviewItem');
+
+  // if both sidebar and infoWindow is not showing, make all tabIndex -1.
+    if (sidebar.style.width == '0px' && infoWindow.style.width == '0px') {
+      //sidebar
+      locationField.tabIndex = -1;
+      locationFieldBtn.tabIndex = -1;
+      locationFindBtn.tabIndex = -1;
+      searchField.tabIndex = -1;
+      for (i = 0; i < sidebarListItems.length; i++) {
+        sidebarListItems[i].tabIndex = -1;
+      };
+      //infoWindow
+      backBtn.tabIndex = -1;
+      parkInfoH2.tabIndex = -1;
+      openHoursH2.tabIndex = -1;
+      reviewsH2.tabIndex = -1;
+      for (j = 0; j < infoSpans.length; j++) {
+        infoSpans[j].tabIndex = -1;
+      };
+      for (k = 0; k < dayTimes.length; k++) {
+        dayTimes[k].tabIndex = -1;
+      };
+      for (l = 0; l < reviewItems.length; l++) {
+        reviewItems[l].tabIndex = -1;
+      };
+  // if sidebar hiding and infoWindow is up, then do this.
+    } else if (sidebar.style.width == '0px') {
+      //sidebar
+      locationField.tabIndex = -1;
+      locationFieldBtn.tabIndex = -1;
+      locationFindBtn.tabIndex = -1;
+      searchField.tabIndex = -1;
+      for (i = 0; i < sidebarListItems.length; i++) {
+        sidebarListItems[i].tabIndex = -1;
+      };
+      //infoWindow
+      backBtn.tabIndex = 0;
+      parkInfoH2.tabIndex = 0;
+      openHoursH2.tabIndex = 0;
+      reviewsH2.tabIndex = 0;
+      for (j = 0; j < infoSpans.length; j++) {
+        infoSpans[j].tabIndex = 0;
+      };
+      for (k = 0; k < dayTimes.length; k++) {
+        dayTimes[k].tabIndex = 0;
+      };
+      for (l = 0; l < reviewItems.length; l++) {
+        reviewItems[l].tabIndex = 0;
+      };
+  // else sidebar is up and infoWindow is hiding.
+    } else {
+      //sidebar
+      locationField.tabIndex = 0;
+      locationFieldBtn.tabIndex = 0;
+      locationFindBtn.tabIndex = 0;
+      searchField.tabIndex = 0;
+      for (i = 0; i < sidebarListItems.length; i++) {
+        sidebarListItems[i].tabIndex = 0;
+      };
+      //infoWindow
+      backBtn.tabIndex = -1;
+      parkInfoH2.tabIndex = -1;
+      openHoursH2.tabIndex = -1;
+      reviewsH2.tabIndex = -1;
+      for (j = 0; j < infoSpans.length; j++) {
+        infoSpans[j].tabIndex = -1;
+      };
+      for (k = 0; k < dayTimes.length; k++) {
+        dayTimes[k].tabIndex = -1;
+      };
+      for (l = 0; l < reviewItems.length; l++) {
+        reviewItems[l].tabIndex = -1;
+      };
     }
   }
 
