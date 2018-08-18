@@ -76,8 +76,13 @@ class SideBar extends Component {
           <p id="searchLabel" className="sidebar-list-p">Parks in area:</p>
           <input id="searchField" className="searchField" onChange={(e) => this.handleInput(e.target.value)} type="search" aria-labelledby="searchLabel" placeholder="Search by name.." />
           <ul id="sidebar-list" ref="sidebarList" className="sidebar-list">
+            {this.props.googlePlacesError !== false &&
+              <li className="sidebarErrorMessage">
+                {this.props.googlePlacesError}
+              </li>
+            }
             {this.props.unsplashError &&
-              <li className="unsplashError">
+              <li className="sidebarErrorMessage">
                 Request error, some/all images will not show.
               </li>
             }

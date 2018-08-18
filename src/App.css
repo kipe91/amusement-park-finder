@@ -202,11 +202,10 @@
   background-color: orange;
 }
 
-.unsplashError {
+.sidebarErrorMessage {
   color: #FE6363;
   margin: 0;
   padding: 5px;
-  width: 100%;
 }
 
 /**************************

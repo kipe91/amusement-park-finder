@@ -12,13 +12,8 @@ class App extends Component {
 * State's
 *******************************************/
   state = {
+    //places
     userLocation: {
-      /*Sweden*/
-      //lat: 58.63064,
-      //lng: 12.29843
-      /*Germany*/
-      //lat: 50.736000,
-      //lng: 10.237134
       /*USA, Miami*/
       lat: 26.040674,
       lng: -80.233292
@@ -28,9 +23,11 @@ class App extends Component {
     selectedPlace: {},
     query: '',
     map: null,
+    //requests
     getInfoRequest: false,
     getImageRequest: false,
-    unsplashError: false
+    unsplashError: false,
+    googlePlacesError: false
   }
 
 /*******************************************
@@ -141,6 +138,15 @@ class App extends Component {
 
 //----------------
 
+  resetErrorState = () => {
+    this.setState({getInfoRequest: false});
+    this.setState({getImageRequest: false});
+    this.setState({unsplashError: false})
+    this.setState({googlePlacesError: false})
+  }
+
+//----------------
+
   getParks = () => {
   /* Find parks in selected area */
     var thiss = this;
@@ -148,10 +154,7 @@ class App extends Component {
         location: this.state.userLocation,
         type: ['amusement_park']
     };
-    this.setState({getInfoRequest: false});
-    this.setState({getImageRequest: false});
-
-    this.hideCurrentParks();
+    this.resetErrorState();
 
     var service = new window.google.maps.places.PlacesService(this.state.map);
     service.textSearch(placeRequest, callback);
@@ -159,6 +162,7 @@ class App extends Component {
     function callback(results, status) {
       var memory = [];
       if (status == window.google.maps.places.PlacesServiceStatus.OK) {
+        thiss.hideCurrentParks();
         for (var i = 0; i < results.length; i++) {
           results[i].photo = '';
           results[i].opening_hours = '';
@@ -170,6 +174,10 @@ class App extends Component {
         thiss.getImages(memory);
         thiss.getFullInfo(memory);
         thiss.createMarker(memory);
+      } else if (status == window.google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
+        thiss.setState({googlePlacesError: 'Zero Results, test one more time.'});
+      } else {
+        thiss.setState({googlePlacesError: 'Problem with connecting to google servers.. try again later.'});
       }
 
       updateState();
@@ -194,7 +202,6 @@ class App extends Component {
 //----------------
 
   getImages = (parks) => {
-    this.setState({unsplashError: false})
     parks.forEach((park) => {
       fetch('https://api.unsplash.com/search/photos?page=1&query=' + park.name, {
         headers: {
@@ -231,6 +238,7 @@ class App extends Component {
           park.formatted_phone_number = place.formatted_phone_number;
           park.reviews = place.reviews;
         }
+        //No else statement needed. If it fails then park.[info] will be empty.
       }
     })
     this.setState({getInfoRequest: true});
@@ -404,8 +412,9 @@ class App extends Component {
           //parks
           allParks={this.state.parks}
           query={this.state.query}
-          //other
+          //errors
           unsplashError={this.state.unsplashError}
+          googlePlacesError={this.state.googlePlacesError}
         />
 
         <InfoWindow
