@@ -75,17 +75,17 @@ class SideBar extends Component {
         <div className="sidebar-list-area">
           <p id="searchLabel" className="sidebar-list-p">Parks in area:</p>
           <input id="searchField" className="searchField" onChange={(e) => this.handleInput(e.target.value)} type="search" aria-labelledby="searchLabel" placeholder="Search by name.." />
-          <ul id="sidebar-list" ref="sidebarList" className="sidebar-list">
-            {this.props.googlePlacesError !== false &&
-              <li className="sidebarErrorMessage">
+          {this.props.googlePlacesError !== false &&
+              <p className="sidebarErrorMessage">
                 {this.props.googlePlacesError}
-              </li>
+              </p>
             }
             {this.props.unsplashError &&
-              <li className="sidebarErrorMessage">
+              <p className="sidebarErrorMessage">
                 Request error, some/all images will not show.
-              </li>
+              </p>
             }
+          <ul id="sidebar-list" ref="sidebarList" className="sidebar-list">
             {this.props.allParks.sort(sortBy('-rating'))
               .filter(park => park.name.toUpperCase().indexOf(this.props.query) > -1)
               .map((park, index) => {

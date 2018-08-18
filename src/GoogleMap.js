@@ -9,6 +9,12 @@ export class MapContainer extends Component {
 * Functions
 *******************************************/
 
+	componentDidMount() {
+		window.addEventListener("unhandledrejection", function (event) {
+			alert('Something went wrong.. please refresh if needed');
+		});
+	}
+
 	startMap = (mapProps, map) => {
 	/* Sets map */
 	var styledMapType = new window.google.maps.StyledMapType(

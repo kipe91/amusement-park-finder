@@ -129,7 +129,7 @@
   background-color: #555454;
   list-style-type: none;
   min-height: 100px;
-  max-height: 500px;
+  max-height: 480px;
   overflow-y: scroll;
   border-top: 1px solid #555454;
   border-bottom: 1px solid #555454;
@@ -202,7 +202,7 @@
   background-color: orange;
 }
 
-.sidebarErrorMessage {
+.sidebar .sidebarErrorMessage {
   color: #FE6363;
   margin: 0;
   padding: 5px;
@@ -380,9 +380,15 @@
   }
 }
 
-@media screen and (max-height: 650px) {
+@media screen and (max-height: 660px) {
   .sidebar-list {
     max-height: 340px;
+  }
+}
+
+@media screen and (max-height: 600px) {
+  .sidebar-list {
+    max-height: 300px;
   }
 }
 
