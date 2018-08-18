@@ -135,7 +135,7 @@
   border-bottom: 1px solid #555454;
 }
 
-.sidebar-list li {
+.sidebar-list .sidebarListItem {
   padding: 10px;
   margin: 0;
   border: 2px solid #323232;
@@ -144,7 +144,7 @@
   box-shadow: 0 2px 5px inset, 0 -2px 5px inset;
 }
 
-.sidebar-list li:hover {
+.sidebar-list .sidebarListItem:hover {
   background-color: #555454;
   cursor: pointer;
 }
@@ -202,6 +202,13 @@
   background-color: orange;
 }
 
+.unsplashError {
+  color: #FE6363;
+  margin: 0;
+  padding: 5px;
+  width: 100%;
+}
+
 /**************************
 * InfoWindow
 **************************/
@@ -253,6 +260,7 @@
   left: 0;
   width: 100%;
   height: auto;
+  min-height: 50px;
   max-height: 400px;
 }
 
@@ -260,6 +268,13 @@
   margin: auto;
   margin-top: -20px;
   text-shadow: 2px 2px #000;
+}
+
+.infoWindow-image .unsplashFotoError {
+  margin: auto;
+  margin-top: -20px;
+  text-shadow: 2px 2px #000;
+  text-align: left;
 }
 
 .infoWindow p {

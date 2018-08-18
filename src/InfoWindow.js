@@ -32,7 +32,11 @@ class InfoWindow extends Component {
         <button id="backBtn" className="backBtn" onClick={this.goBack}><img id='backBtnImg' alt='' src={goBackBtn}/>Back to list</button>
         <div className="infoWindow-image">
           <img src={image} alt={'Amusement park ' + this.props.selectedPlace.name} />
-          <p className="unsplashFoto">Photo from <i>unsplash.com</i></p>
+          {this.props.selectedPlace.photo ? (
+            <p className="unsplashFoto">Photo from <i>unsplash.com</i></p>
+            ) : (
+            <p className="unsplashFotoError">Placeholder image</p>
+          )}
         </div>
         <div className="infoWindow-info">
           <h2 id="parkInfoH2">Park information:</h2>

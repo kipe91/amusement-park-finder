@@ -76,6 +76,11 @@ class SideBar extends Component {
           <p id="searchLabel" className="sidebar-list-p">Parks in area:</p>
           <input id="searchField" className="searchField" onChange={(e) => this.handleInput(e.target.value)} type="search" aria-labelledby="searchLabel" placeholder="Search by name.." />
           <ul id="sidebar-list" ref="sidebarList" className="sidebar-list">
+            {this.props.unsplashError &&
+              <li className="unsplashError">
+                Request error, some/all images will not show.
+              </li>
+            }
             {this.props.allParks.sort(sortBy('-rating'))
               .filter(park => park.name.toUpperCase().indexOf(this.props.query) > -1)
               .map((park, index) => {

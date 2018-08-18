@@ -29,7 +29,8 @@ class App extends Component {
     query: '',
     map: null,
     getInfoRequest: false,
-    getImageRequest: false
+    getImageRequest: false,
+    unsplashError: false
   }
 
 /*******************************************
@@ -193,6 +194,7 @@ class App extends Component {
 //----------------
 
   getImages = (parks) => {
+    this.setState({unsplashError: false})
     parks.forEach((park) => {
       fetch('https://api.unsplash.com/search/photos?page=1&query=' + park.name, {
         headers: {
@@ -202,7 +204,10 @@ class App extends Component {
       .then((images) => {
         park.photo = images.results[0];
       })
-      .catch(err => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        this.setState({unsplashError: true})
+      });
     })
     this.setState({getImageRequest: true});
   }
@@ -399,6 +404,8 @@ class App extends Component {
           //parks
           allParks={this.state.parks}
           query={this.state.query}
+          //other
+          unsplashError={this.state.unsplashError}
         />
 
         <InfoWindow
