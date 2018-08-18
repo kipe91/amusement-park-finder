@@ -28,7 +28,7 @@ class InfoWindow extends Component {
     }
 
     return (
-      <div id="infoWindow" className="infoWindow">
+      <aside id="infoWindow" className="infoWindow">
         <button id="backBtn" className="backBtn" onClick={this.goBack}><img id='backBtnImg' alt='' src={goBackBtn}/>Back to list</button>
         <div className="infoWindow-image">
           <img src={image} alt={'Amusement park ' + this.props.selectedPlace.name} />
@@ -75,7 +75,7 @@ class InfoWindow extends Component {
             <ul className="reviewList"><li className="reviewItem"><i>Sorry, no reviews</i></li></ul>
           )}
         </div>
-      </div>
+      </aside>
     );
   }
 }

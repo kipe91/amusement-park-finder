@@ -64,17 +64,17 @@ class SideBar extends Component {
 *******************************************/
 	render() {
     return (
-      <div id="sidebar" className="sidebar">
+      <aside id="sidebar" className="sidebar">
         <div className="sidebar-inputs">
-          <p>Your location:</p>
-          <input id="locationField" className="locationField" type="text" placeholder="Ex: Stockholm, Sweden" />
+          <p id="positionLabel">Your location:</p>
+          <input id="locationField" className="locationField" type="text" aria-labelledby="positionLabel" placeholder="Ex: Stockholm, Sweden" />
           <button id="locationFieldBtn" onClick={this.updateLocation.bind(this)}>Go</button>
           <br />
           <button id="locationFindBtn" onClick={this.findLocation.bind(this)}>Get your location</button>
         </div>
         <div className="sidebar-list-area">
-          <p className="sidebar-list-p">Parks in area:</p>
-          <input id="searchField" className="searchField" onChange={(e) => this.handleInput(e.target.value)} type="search" placeholder="Search by name.." />
+          <p id="searchLabel" className="sidebar-list-p">Parks in area:</p>
+          <input id="searchField" className="searchField" onChange={(e) => this.handleInput(e.target.value)} type="search" aria-labelledby="searchLabel" placeholder="Search by name.." />
           <ul id="sidebar-list" ref="sidebarList" className="sidebar-list">
             {this.props.allParks.sort(sortBy('-rating'))
               .filter(park => park.name.toUpperCase().indexOf(this.props.query) > -1)
@@ -84,14 +84,14 @@ class SideBar extends Component {
                     <img src={ park.photo ? park.photo.urls.small : noImage } alt={"Amusement park " + park.name} />
                     <div className="park-info">
                       <p>{park.name}</p>
-                      <p>{park.rating}</p>
+                      <p>Rating: {park.rating}</p>
                     </div>
                   </li>
                 )
             })}
           </ul>
         </div>
-      </div>
+      </aside>
     );
   }
 }

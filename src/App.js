@@ -72,6 +72,7 @@ class App extends Component {
   /* ItemClicked, show infoWinfow with correct park */
     var sidebar = document.getElementById('sidebar');
     var infoWindow = document.getElementById('infoWindow');
+    var infoWindowFocus = document.getElementById('parkInfoH2');
 
     if ((sidebar.style.width == '0px') && (infoWindow.style.width == '0px')) {
       var menu = document.getElementById('menu');
@@ -80,6 +81,7 @@ class App extends Component {
 
     sidebar.style.width = '0';
     setTimeout(() => {
+      infoWindowFocus.focus();
       (window.screen.width > 400)? infoWindow.style.width = '400px' : infoWindow.style.width = '100%';
     }, 600)
 
@@ -105,15 +107,16 @@ class App extends Component {
   // Change back to sidebar
     var sidebar = document.getElementById('sidebar');
     var infoWindow = document.getElementById('infoWindow');
+    var sidebarFocus = document.getElementById('searchLabel');
     infoWindow.style.width = '0';
 
     setTimeout(() => {
+      sidebarFocus.focus();
       (window.screen.width > 400)? sidebar.style.width = '400px' : sidebar.style.width = '100%';
     }, 600)
     this.setState({
       showingInfoWindow: false
     })
-
     setTimeout(() => {
       this.tabFocus();
     }, 800)

@@ -20,14 +20,14 @@ class ParkHeader extends Component {
 *******************************************/
   render() {
     return (
-      <div className="header">
+      <header className="header">
         <div id="menu" className="menuContainer change" onClick={this.props.onMenuToggler} onKeyDown={(event) => this.menuPressed(event)} tabIndex="0" aria-label="Toggle menu" role='button'>
           <div className="bar1"></div>
           <div className="bar2"></div>
           <div className="bar3"></div>
         </div>
         <h1>Amusement Parks</h1>
-      </div>
+      </header>
     )
   }
 }
