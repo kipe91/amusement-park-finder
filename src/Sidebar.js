@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './App.css';
 import sortBy from 'sort-by';
 import noImage from './utils/placeholder.jpg';
-import imgMarked from './utils/hover.marker-icon.png';
 
 class SideBar extends Component {
 
@@ -90,7 +89,7 @@ class SideBar extends Component {
               .filter(park => park.name.toUpperCase().indexOf(this.props.query) > -1)
               .map((park, index) => {
                 return (
-                  <li key={ index } className="sidebarListItem" onMouseOver={() => park.marker.setIcon(imgMarked)} onMouseOut={() => park.marker.setIcon(null)} onClick={() => this.listItemClick(park)} onKeyDown={(event) => this.listItemPress(event, park)} tabIndex="0">
+                  <li key={ index } className="sidebarListItem" onMouseOver={() => park.marker.setAnimation(window.google.maps.Animation.BOUNCE)} onMouseOut={() => park.marker.setAnimation(null)} onClick={() => this.listItemClick(park)} onKeyDown={(event) => this.listItemPress(event, park)} tabIndex="0">
                     <img src={ park.photo ? park.photo.urls.small : noImage } alt={"Amusement park " + park.name} />
                     <div className="park-info">
                       <p>{park.name}</p>

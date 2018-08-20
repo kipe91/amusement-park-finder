@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import {Map, Marker, GoogleApiWrapper} from 'google-maps-react';
-import userImg from './utils/youMarkerRed.png';
+import userImg from './utils/youMarkerBlue.png';
 
 export class MapContainer extends Component {
 

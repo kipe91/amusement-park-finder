@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import imgMarked from './utils/hover.marker-icon.png';
+import imgMarkerClicked from './utils/marker-icon-blue.png';
 import MapContainer from './GoogleMap';
 import SideBar from './Sidebar';
 import InfoWindow from './InfoWindow';
@@ -84,9 +84,9 @@ class App extends Component {
     }, 600)
 
     this.state.parks.forEach((thePark) => {
-      thePark.marker.setAnimation(null);
+      thePark.marker.setIcon(null);
     })
-    park.marker.setAnimation(window.google.maps.Animation.BOUNCE);
+    park.marker.setIcon(imgMarkerClicked);
 
     this.setState({
       selectedPlace: park,
@@ -254,9 +254,8 @@ class App extends Component {
         position: park.geometry.location,
         animation: window.google.maps.Animation.DROP
       });
-      
-      park.marker.addListener('mouseover', () => park.marker.setIcon(imgMarked));
-      park.marker.addListener('mouseout', () => park.marker.setIcon(null));
+      park.marker.addListener('mouseover', () => park.marker.setAnimation(window.google.maps.Animation.BOUNCE));
+      park.marker.addListener('mouseout', () => park.marker.setAnimation(null));
       park.marker.addListener('click', () => this.ItemClicked(park));
     })
   }
