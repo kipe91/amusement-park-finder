@@ -19,10 +19,14 @@ class App extends Component {
       lng: -80.233292
     },
     parks: [],
+    //what to show
     showingInfoWindow: false,
     selectedPlace: {},
     query: '',
+    //google services
     map: null,
+    directionsService: null,
+    directionsDisplay: null,
     //requests
     getInfoRequest: false,
     getImageRequest: false,
@@ -125,7 +129,33 @@ class App extends Component {
   setMap = (map) => {
   /* Sets the initinal map to have as referens */
     this.setState({ map: map});
+    this.setState({ directionsService: new window.google.maps.DirectionsService() });
+    this.setState({ directionsDisplay: new window.google.maps.DirectionsRenderer({suppressMarkers: true}) });
+    this.state.directionsDisplay.setMap(map);
+
     this.getParks();
+  }
+
+//----------------
+
+  calcRoute= () => {
+    var start = this.state.userLocation;
+    var end = this.state.selectedPlace.geometry.location;
+    var request = {
+      origin: start,
+      destination: end,
+      travelMode: 'DRIVING',
+      unitSystem: window.google.maps.UnitSystem.METRIC
+    };
+    this.state.directionsService.route(request, (result, status) => {
+      if (status == 'OK') {
+        var directionDistance = document.getElementById('directionDistance');
+        var directionDuration = document.getElementById('directionDuration');
+        directionDistance.innerHTML = '<br />Distance: ' + result.routes[0].legs[0].distance.text;
+        directionDuration.innerHTML = '<br />Duration: ' + result.routes[0].legs[0].duration.text;
+        this.state.directionsDisplay.setDirections(result);
+      }
+    });
   }
 
 //----------------
@@ -419,6 +449,7 @@ class App extends Component {
         <InfoWindow
           //functions
           onGoBack={this.closeInfoWindow}
+          onCalcRoute={this.calcRoute}
           //parks
           selectedPlace={this.state.selectedPlace}
         />

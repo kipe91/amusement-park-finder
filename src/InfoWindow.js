@@ -47,6 +47,11 @@ class InfoWindow extends Component {
             <span className="infoSpan"><strong>Website: </strong><a href={this.props.selectedPlace.website} target="_blank">{this.props.selectedPlace.website}</a></span><br />
             <span className="infoSpan"><strong>Total rating: </strong><i>{this.props.selectedPlace.rating}</i></span>
           </p>
+          <div className="directionsPart">
+            <button id="directionBtn" className="directionBtn" onClick={() => this.props.onCalcRoute()}>Get driving directions</button>
+            <span id="directionDistance"></span>
+            <span id="directionDuration"></span>
+          </div>
           <h2 id="openHoursH2">Opening hours: </h2>
             {openTimes ? (
               <ul className="timeList">
