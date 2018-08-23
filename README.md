@@ -27,8 +27,9 @@ The service worker is only implemented during production build! To run server wi
 - Unsplash, photo service. [`link`](https://unsplash.com/)
 
 ## React packages
-- google maps react, [`link`](https://www.npmjs.com/package/google-maps-react)
-- sort by, [`link`](https://www.npmjs.com/package/sort-by)
+- google-maps-react, [`link`](https://www.npmjs.com/package/google-maps-react)
+- sort-by, [`link`](https://www.npmjs.com/package/sort-by)
+- react-router-dom, [`link`](https://www.npmjs.com/package/react-router-dom)
 
 ## License: 
-Free to test for private use. For other idées please contact me.
+Free for private testing. For other idées please contact me.

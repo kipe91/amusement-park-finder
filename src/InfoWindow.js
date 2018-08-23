@@ -1,17 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 import noImage from './utils/placeholder.jpg';
-import goBackBtn from './utils/back-arrow-white.png';
 
-class InfoWindow extends Component {
-
-/*******************************************
-* Functions
-*******************************************/
-  goBack = () => {
-  /* Change from infoWindow to Sidebar in App.js */
-    this.props.onGoBack();
-  }
+class ParkInfoSection extends Component {
 
 /*******************************************
 * Render part
@@ -28,8 +19,7 @@ class InfoWindow extends Component {
     }
 
     return (
-      <aside id="infoWindow" className="infoWindow">
-        <button id="backBtn" className="backBtn" onClick={this.goBack}><img id='backBtnImg' alt='' src={goBackBtn}/>Back to list</button>
+      <aside className="infoWindow">
         <div className="infoWindow-image">
           <img src={image} alt={'Amusement park ' + this.props.selectedPlace.name} />
           {this.props.selectedPlace.photo ? (
@@ -89,4 +79,4 @@ class InfoWindow extends Component {
   }
 }
 
-export default InfoWindow;
+export default ParkInfoSection;

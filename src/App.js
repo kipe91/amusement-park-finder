@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import './App.css';
 import imgMarkerClicked from './utils/marker-icon-blue.png';
 import MapContainer from './GoogleMap';
-import SideBar from './Sidebar';
-import InfoWindow from './InfoWindow';
-import ParkHeader from './ParkHeader';
+import FilterSearch from './SearchWindow';
+import ListSection from './ListWindow';
+import ParkInfoSection from './InfoWindow';
+import SiteHeader from './components/SiteHeader';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 class App extends Component {
 
@@ -20,7 +22,6 @@ class App extends Component {
     },
     parks: [],
     //what to show
-    showingInfoWindow: false,
     selectedPlace: {},
     query: '',
     //google services
@@ -71,57 +72,14 @@ class App extends Component {
 //----------------
 
   ItemClicked = (park) => {
-  /* ItemClicked, show infoWinfow with correct park */
-    var sidebar = document.getElementById('sidebar');
-    var infoWindow = document.getElementById('infoWindow');
-    var infoWindowFocus = document.getElementById('parkInfoH2');
-
-    if ((sidebar.style.width == '0px') && (infoWindow.style.width == '0px')) {
-      var menu = document.getElementById('menu');
-      menu.classList.toggle("change");
-    }
-
-    sidebar.style.width = '0';
-    setTimeout(() => {
-      infoWindowFocus.focus();
-      (window.screen.width > 400)? infoWindow.style.width = '400px' : infoWindow.style.width = '100%';
-    }, 600)
-
     this.state.parks.forEach((thePark) => {
       thePark.marker.setIcon(null);
-    })
+    });
     park.marker.setIcon(imgMarkerClicked);
 
     this.setState({
-      selectedPlace: park,
-      showingInfoWindow: true
-    })
-
-    setTimeout(() => {
-      this.tabFocus();
-    }, 800)
-  }
-
-//----------------
-
-  closeInfoWindow = () => {
-  /* CloseInfoWindow, or GoBack() from infowindow.js */
-  // Change back to sidebar
-    var sidebar = document.getElementById('sidebar');
-    var infoWindow = document.getElementById('infoWindow');
-    var sidebarFocus = document.getElementById('searchLabel');
-    infoWindow.style.width = '0';
-
-    setTimeout(() => {
-      sidebarFocus.focus();
-      (window.screen.width > 400)? sidebar.style.width = '400px' : sidebar.style.width = '100%';
-    }, 600)
-    this.setState({
-      showingInfoWindow: false
-    })
-    setTimeout(() => {
-      this.tabFocus();
-    }, 800)
+      selectedPlace: park
+    });
   }
 
 //----------------
@@ -132,30 +90,30 @@ class App extends Component {
     this.setState({ directionsService: new window.google.maps.DirectionsService() });
     this.setState({ directionsDisplay: new window.google.maps.DirectionsRenderer({suppressMarkers: true}) });
     this.state.directionsDisplay.setMap(map);
-
-    this.getParks();
   }
 
 //----------------
 
   calcRoute= () => {
-    var start = this.state.userLocation;
-    var end = this.state.selectedPlace.geometry.location;
-    var request = {
-      origin: start,
-      destination: end,
-      travelMode: 'DRIVING',
-      unitSystem: window.google.maps.UnitSystem.METRIC
-    };
-    this.state.directionsService.route(request, (result, status) => {
-      if (status == 'OK') {
-        var directionDistance = document.getElementById('directionDistance');
-        var directionDuration = document.getElementById('directionDuration');
-        directionDistance.innerHTML = '<br />Distance: ' + result.routes[0].legs[0].distance.text;
-        directionDuration.innerHTML = '<br />Duration: ' + result.routes[0].legs[0].duration.text;
-        this.state.directionsDisplay.setDirections(result);
-      }
-    });
+    if (this.state.selectedPlace.geometry) {
+      var start = this.state.userLocation;
+      var end = this.state.selectedPlace.geometry.location;
+      var request = {
+        origin: start,
+        destination: end,
+        travelMode: 'DRIVING',
+        unitSystem: window.google.maps.UnitSystem.METRIC
+      };
+      this.state.directionsService.route(request, (result, status) => {
+        if (status == 'OK') {
+          var directionDistance = document.getElementById('directionDistance');
+          var directionDuration = document.getElementById('directionDuration');
+          directionDistance.innerHTML = '<br />Distance: ' + result.routes[0].legs[0].distance.text;
+          directionDuration.innerHTML = '<br />Duration: ' + result.routes[0].legs[0].duration.text;
+          this.state.directionsDisplay.setDirections(result);
+        }
+      });
+    }
   }
 
 //----------------
@@ -304,163 +262,59 @@ class App extends Component {
     })
   }
 
-//----------------
-
-  menuToggler = () => {
-  /* Toggle if Sidebar/Infowindow is shown */
-    var menu = document.getElementById('menu');
-    menu.classList.toggle("change");
-    var sidebar = document.getElementById('sidebar');
-    var infoWindow = document.getElementById('infoWindow');
-
-    if (this.state.showingInfoWindow) {
-      (infoWindow.style.width == '0px') ? (window.screen.width > 400)? infoWindow.style.width = '400px' : infoWindow.style.width = '100%' : infoWindow.style.width = '0px';
-    }
-    else {
-      (sidebar.style.width == '0px') ? (window.screen.width > 400)? sidebar.style.width = '400px' : sidebar.style.width = '100%' : sidebar.style.width = '0px';
-    }
-    setTimeout(() => {
-      this.tabFocus();
-    }, 800)
-  }
-
-//----------------
-
-  tabFocus = () => {
-  /* Really shit code to make sure tabbing stays corrent. */
-    var sidebar = document.getElementById('sidebar');
-    var infoWindow = document.getElementById('infoWindow');
-    var i,j,k,l;
-
-    var locationField = document.getElementById('locationField');
-    var locationFieldBtn = document.getElementById('locationFieldBtn');
-    var locationFindBtn = document.getElementById('locationFindBtn');
-    var searchField = document.getElementById('searchField');
-    var sidebarListItems = document.getElementsByClassName('sidebarListItem');
-
-    var backBtn = document.getElementById('backBtn');
-    var parkInfoH2 = document.getElementById('parkInfoH2');
-    var openHoursH2 = document.getElementById('openHoursH2');
-    var reviewsH2 = document.getElementById('reviewsH2');
-    var infoSpans = document.getElementsByClassName('infoSpan');
-    var dayTimes = document.getElementsByClassName('dayTimes');
-    var reviewItems = document.getElementsByClassName('reviewItem');
-
-  // if both sidebar and infoWindow is not showing, make all tabIndex -1.
-    if (sidebar.style.width == '0px' && infoWindow.style.width == '0px') {
-      //sidebar
-      locationField.tabIndex = -1;
-      locationFieldBtn.tabIndex = -1;
-      locationFindBtn.tabIndex = -1;
-      searchField.tabIndex = -1;
-      for (i = 0; i < sidebarListItems.length; i++) {
-        sidebarListItems[i].tabIndex = -1;
-      };
-      //infoWindow
-      backBtn.tabIndex = -1;
-      parkInfoH2.tabIndex = -1;
-      openHoursH2.tabIndex = -1;
-      reviewsH2.tabIndex = -1;
-      for (j = 0; j < infoSpans.length; j++) {
-        infoSpans[j].tabIndex = -1;
-      };
-      for (k = 0; k < dayTimes.length; k++) {
-        dayTimes[k].tabIndex = -1;
-      };
-      for (l = 0; l < reviewItems.length; l++) {
-        reviewItems[l].tabIndex = -1;
-      };
-  // if sidebar hiding and infoWindow is up, then do this.
-    } else if (sidebar.style.width == '0px') {
-      //sidebar
-      locationField.tabIndex = -1;
-      locationFieldBtn.tabIndex = -1;
-      locationFindBtn.tabIndex = -1;
-      searchField.tabIndex = -1;
-      for (i = 0; i < sidebarListItems.length; i++) {
-        sidebarListItems[i].tabIndex = -1;
-      };
-      //infoWindow
-      backBtn.tabIndex = 0;
-      parkInfoH2.tabIndex = 0;
-      openHoursH2.tabIndex = 0;
-      reviewsH2.tabIndex = 0;
-      for (j = 0; j < infoSpans.length; j++) {
-        infoSpans[j].tabIndex = 0;
-      };
-      for (k = 0; k < dayTimes.length; k++) {
-        dayTimes[k].tabIndex = 0;
-      };
-      for (l = 0; l < reviewItems.length; l++) {
-        reviewItems[l].tabIndex = 0;
-      };
-  // else sidebar is up and infoWindow is hiding.
-    } else {
-      //sidebar
-      locationField.tabIndex = 0;
-      locationFieldBtn.tabIndex = 0;
-      locationFindBtn.tabIndex = 0;
-      searchField.tabIndex = 0;
-      for (i = 0; i < sidebarListItems.length; i++) {
-        sidebarListItems[i].tabIndex = 0;
-      };
-      //infoWindow
-      backBtn.tabIndex = -1;
-      parkInfoH2.tabIndex = -1;
-      openHoursH2.tabIndex = -1;
-      reviewsH2.tabIndex = -1;
-      for (j = 0; j < infoSpans.length; j++) {
-        infoSpans[j].tabIndex = -1;
-      };
-      for (k = 0; k < dayTimes.length; k++) {
-        dayTimes[k].tabIndex = -1;
-      };
-      for (l = 0; l < reviewItems.length; l++) {
-        reviewItems[l].tabIndex = -1;
-      };
-    }
-  }
-
 /*******************************************
 * Render part
 *******************************************/
   render() {
     return (
-      <div className="App">
-        <ParkHeader 
-          //functions
-          onMenuToggler={this.menuToggler}
-        />
+      <Router>
+        <div className="App">
+          <SiteHeader 
+            //functions
+            onMenuToggler={this.menuToggler}
+          />
 
-        <SideBar
-          //functions
-          onUpdateLocation={this.updateLocation}
-          onGetUserLocation={this.getUserLocation}
-          onListItemClick={this.ItemClicked}
-          onHandleInput={this.updateQuery}
-          //parks
-          allParks={this.state.parks}
-          query={this.state.query}
-          //errors
-          unsplashError={this.state.unsplashError}
-          googlePlacesError={this.state.googlePlacesError}
-        />
+          <Route path="/start" render={() => (
+            <FilterSearch
+              //functions
+              onUpdateLocation={this.updateLocation}
+              onGetUserLocation={this.getUserLocation}
+            />
+          )}/>
 
-        <InfoWindow
-          //functions
-          onGoBack={this.closeInfoWindow}
-          onCalcRoute={this.calcRoute}
-          //parks
-          selectedPlace={this.state.selectedPlace}
-        />
+          <Route path="/list" render={() => (
+            <ListSection
+              //functions
+              onListItemClick={this.ItemClicked}
+              onHandleInput={this.updateQuery}
+              //parks
+              allParks={this.state.parks}
+              query={this.state.query}
+              //errors
+              unsplashError={this.state.unsplashError}
+              googlePlacesError={this.state.googlePlacesError}
+            />
+          )}/>
 
-        <MapContainer
-          //postition
-          userLocation={this.state.userLocation}
-          //functions
-          onSetMap={this.setMap}
-        />
-      </div>
+          <Route path="/park" render={() => (
+            <ParkInfoSection
+              //functions
+              onCalcRoute={this.calcRoute}
+              //parks
+              selectedPlace={this.state.selectedPlace}
+            />
+          )}/>
+
+          <Route path="/" render={() => (
+            <MapContainer
+              //postition
+              userLocation={this.state.userLocation}
+              //functions
+              onSetMap={this.setMap}
+            />
+          )}/>
+        </div>
+      </Router>
     );
   }
 }
