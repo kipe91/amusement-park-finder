@@ -14,8 +14,6 @@ class FilterSearch extends Component {
 	    	this.updateLocation(event);
 	    }
 	}
-
-//----------------
  
 	updateLocation(e) {
 	/* Send textField 'adress' to App.js */
@@ -29,17 +27,7 @@ class FilterSearch extends Component {
 	findLocation(e) {
 	/* Find user location and update it */
 		e.preventDefault();
-		if (navigator.geolocation) {
-		    navigator.geolocation.getCurrentPosition(showPosition);
-		} else {
-		    alert("Geolocation is not supported by this browser.");
-		}
-
-		var sidebar = this;
-
-		function showPosition(position) { 
-		  sidebar.props.onGetUserLocation(position);
-		}
+		this.props.onGetUserLocation();
 	}
 
 /*******************************************
@@ -48,7 +36,13 @@ class FilterSearch extends Component {
 	render() {
 	    return (
 	    	<aside className="searchSection">
-	      		<p id="positionLabel">Your location:</p>
+	    		<h2>Welcome!</h2>
+	    		<p>This site helps you with amusement parks around the world. 
+	    		Find the closest one's to your location or in a specific place.</p>
+	    		<p>Get information like address and phone or reviews about the parks.
+	    		We can also show you the driving direction from you to the park.</p>
+
+	      		<h3 id="positionLabel">Your location:</h3>
 		    	<input id="locationField" className="locationField" type="text" aria-labelledby="positionLabel" onKeyDown={(event) => this.checkKeyPress(event)} placeholder="Ex: Stockholm, Sweden" />
 		    	<button id="locationFieldBtn" onClick={this.updateLocation.bind(this)}>Go</button>
 		    	<br />

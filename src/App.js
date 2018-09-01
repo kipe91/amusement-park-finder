@@ -6,7 +6,7 @@ import FilterSearch from './SearchWindow';
 import ListSection from './ListWindow';
 import ParkInfoSection from './InfoWindow';
 import SiteHeader from './components/SiteHeader';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
 class App extends Component {
 
@@ -24,8 +24,12 @@ class App extends Component {
     //what to show
     selectedPlace: {},
     query: '',
+    startPlaceID: null,
+    startPlaceTrue: false,
     //google services
     map: null,
+    geocoder: null,
+    service: null,
     directionsService: null,
     directionsDisplay: null,
     //requests
@@ -39,11 +43,35 @@ class App extends Component {
 * Functions
 *******************************************/
 
+  componentDidMount() {
+  /* Check if any info is provided in browser adress bar */
+    var params = window.location.search.substring(1).split("&");
+    if (params[0] !== "") {
+      var position = params[0].split("=");
+      var latLng = position[1].split(",");
+      var lat = latLng[0];
+      var lng = latLng[1];
+      if (lat && lng) {
+        //this.setState({ userLocation: {lat, lng} });
+      }
+
+      if (params[1] !== undefined && params[1] !== "") {
+        var park = params[1].split("=");
+        var parkID = park[1];
+        this.setState({startPlaceID: parkID, startPlaceTrue: true});
+      }
+    }
+    else {
+      this.getUserLocation();
+    }
+  }
+
+//----------------
+
   updateLocation = (address) => {
   /* Updates location based on users input */
     var thiss = this;
-    var geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode( { 'address': address}, function(results, status) {
+    this.state.geocoder.geocode( { 'address': address}, function(results, status) {
       if (status == 'OK') {
         var result = results[0].geometry.location;
         var lat = result.lat();
@@ -58,15 +86,20 @@ class App extends Component {
 
 //----------------
 
-  getUserLocation = (position) => {
+  getUserLocation = () => {
   /* Set users location with info from geolocation */
-    var lat = position.coords.latitude;
-    var lng = position.coords.longitude;
-    this.setState({ userLocation: {lat, lng} });
-
-    document.getElementById('locationField').value = lat +', '+ lng;
-
-    this.getParks();
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          var lat = position.coords.latitude;
+          var lng = position.coords.longitude;
+          this.setState({ userLocation: {lat, lng} });
+          if (!this.state.startPlaceTrue) {
+            this.getParks();
+          }
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
   }
 
 //----------------
@@ -85,16 +118,21 @@ class App extends Component {
 //----------------
 
   setMap = (map) => {
-  /* Sets the initinal map to have as referens */
+  /* Sets the initinal map and starts first visit functions */
     this.setState({ map: map});
+    this.setState({ geocoder: new window.google.maps.Geocoder() });
+    this.setState({ service: new window.google.maps.places.PlacesService(this.state.map) });
     this.setState({ directionsService: new window.google.maps.DirectionsService() });
     this.setState({ directionsDisplay: new window.google.maps.DirectionsRenderer({suppressMarkers: true}) });
     this.state.directionsDisplay.setMap(map);
+
+    this.getParks();
   }
 
 //----------------
 
   calcRoute= () => {
+  /* Shows driving directions on map */
     if (this.state.selectedPlace.geometry) {
       var start = this.state.userLocation;
       var end = this.state.selectedPlace.geometry.location;
@@ -118,6 +156,27 @@ class App extends Component {
 
 //----------------
 
+  startPark = () => {
+  /* Sets the initinal park if any */
+    console.log(this.state.startPlaceID);
+    var startRequest = {
+      placeId: this.state.startPlaceID,
+      fields: ['name', 'geometry', 'opening_hours', 'website', 'formatted_address', 'formatted_phone_number', 'review']
+    };
+    this.state.service.getDetails(startRequest, (place, status) => {
+      if (status == window.google.maps.places.PlacesServiceStatus.OK) {
+        this.setState({ selectedPlace: place });
+        this.createMarker([place]);
+        this.state.selectedPlace.marker.setIcon(imgMarkerClicked);
+      } else {
+        console.log('error loading first place, see status: ' + status);
+      }
+    });
+    this.setState({ startPlaceTrue: false });
+  }
+
+//----------------
+
   hideCurrentParks = () => {
     this.state.parks.forEach((park) => {
       park.marker.setMap(null);
@@ -127,10 +186,7 @@ class App extends Component {
 //----------------
 
   resetErrorState = () => {
-    this.setState({getInfoRequest: false});
-    this.setState({getImageRequest: false});
-    this.setState({unsplashError: false})
-    this.setState({googlePlacesError: false})
+    this.setState({getInfoRequest: false, getImageRequest: false, unsplashError: false, googlePlacesError: false});
   }
 
 //----------------
@@ -142,15 +198,15 @@ class App extends Component {
         location: this.state.userLocation,
         type: ['amusement_park']
     };
-    this.resetErrorState();
 
-    var service = new window.google.maps.places.PlacesService(this.state.map);
-    service.textSearch(placeRequest, callback);
+    this.resetErrorState();
+    this.state.service.textSearch(placeRequest, callback);
 
     function callback(results, status) {
       var memory = [];
       if (status == window.google.maps.places.PlacesServiceStatus.OK) {
         thiss.hideCurrentParks();
+        // for each result, add some emty variables.
         for (var i = 0; i < results.length; i++) {
           results[i].photo = '';
           results[i].opening_hours = '';
@@ -158,17 +214,34 @@ class App extends Component {
           results[i].formatted_phone_number = '';
           results[i].reviews = '';
           memory.push(results[i]);
+          // if params true on first visit, check if place is in list search.
+          if (thiss.state.startPlaceTrue) {
+            if (results[i].place_id === thiss.state.startPlaceID) {
+              thiss.setState({ selectedPlace: results[i] });
+            }
+          }
         }
+
+        // get more information and create marker.
         thiss.getImages(memory);
         thiss.getFullInfo(memory);
         thiss.createMarker(memory);
+
+        // if params on first visit, do this..
+        if (thiss.state.startPlaceTrue) {
+          if (thiss.state.selectedPlace.place_id) {
+            thiss.state.selectedPlace.marker.setIcon(imgMarkerClicked);
+            thiss.setState({ startPlaceTrue: false });
+          } else {
+            thiss.startPark();
+          }
+        }
       } else if (status == window.google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
         thiss.setState({googlePlacesError: 'Zero Results, test one more time.'});
       } else {
         thiss.setState({googlePlacesError: 'Problem with connecting to google servers.. try again later.'});
       }
 
-      updateState();
       function updateState() {
         //check if info and image request has been sent, else check again in 0.5s
         if (thiss.state.getInfoRequest && thiss.state.getImageRequest) {
@@ -183,7 +256,7 @@ class App extends Component {
           }, 500)
         }
       }
-
+      updateState();
     }
   }
 
@@ -210,14 +283,12 @@ class App extends Component {
 //----------------
 
   getFullInfo = (parks) => {
-    var service = new window.google.maps.places.PlacesService(this.state.map);
-
     parks.forEach((park) => {
       var infoRequest = {
         placeId: park.place_id,
         fields: ['opening_hours', 'website', 'formatted_phone_number', 'review']
       };
-      service.getDetails(infoRequest, callback); 
+      this.state.service.getDetails(infoRequest, callback);
 
       function callback(place, status) {
         if (status == window.google.maps.places.PlacesServiceStatus.OK) {
@@ -267,54 +338,58 @@ class App extends Component {
 *******************************************/
   render() {
     return (
-      <Router>
-        <div className="App">
-          <SiteHeader 
+      <div className="App">
+        <SiteHeader 
+          //state
+          userLocation={this.state.userLocation}
+          selectedPlace={this.state.selectedPlace}
+          //functions
+          onMenuToggler={this.menuToggler}
+        />
+
+        <Route exact path="/" render={() => (
+          <FilterSearch
             //functions
-            onMenuToggler={this.menuToggler}
+            onUpdateLocation={this.updateLocation}
+            onGetUserLocation={this.getUserLocation}
           />
+        )}/>
 
-          <Route path="/start" render={() => (
-            <FilterSearch
-              //functions
-              onUpdateLocation={this.updateLocation}
-              onGetUserLocation={this.getUserLocation}
-            />
-          )}/>
+        <Route path="/list" render={() => (
+          <ListSection
+            //state
+            userLocation={this.state.userLocation}
+            selectedPlace={this.state.selectedPlace}
+            //functions
+            onListItemClick={this.ItemClicked}
+            onHandleInput={this.updateQuery}
+            //parks
+            allParks={this.state.parks}
+            query={this.state.query}
+            //errors
+            unsplashError={this.state.unsplashError}
+            googlePlacesError={this.state.googlePlacesError}
+          />
+        )}/>
 
-          <Route path="/list" render={() => (
-            <ListSection
-              //functions
-              onListItemClick={this.ItemClicked}
-              onHandleInput={this.updateQuery}
-              //parks
-              allParks={this.state.parks}
-              query={this.state.query}
-              //errors
-              unsplashError={this.state.unsplashError}
-              googlePlacesError={this.state.googlePlacesError}
-            />
-          )}/>
+        <Route path="/park" render={() => (
+          <ParkInfoSection
+            //functions
+            onCalcRoute={this.calcRoute}
+            //parks
+            selectedPlace={this.state.selectedPlace}
+          />
+        )}/>
 
-          <Route path="/park" render={() => (
-            <ParkInfoSection
-              //functions
-              onCalcRoute={this.calcRoute}
-              //parks
-              selectedPlace={this.state.selectedPlace}
-            />
-          )}/>
-
-          <Route path="/" render={() => (
-            <MapContainer
-              //postition
-              userLocation={this.state.userLocation}
-              //functions
-              onSetMap={this.setMap}
-            />
-          )}/>
-        </div>
-      </Router>
+        <Route path="/" render={() => (
+          <MapContainer
+            //postition
+            userLocation={this.state.userLocation}
+            //functions
+            onSetMap={this.setMap}
+          />
+        )}/>
+      </div>
     );
   }
 }

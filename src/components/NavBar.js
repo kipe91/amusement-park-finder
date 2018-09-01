@@ -24,24 +24,33 @@ keyPressed = (event) => {
 * Render part
 *******************************************/
   render() {
+    var addressLocation = 'l=' + this.props.userLocation.lat +','+ this.props.userLocation.lng;
+    var addressPark = 'p=' + this.props.selectedPlace.place_id;
+    var placeChoosen;
+    if (this.props.selectedPlace.place_id) {
+      placeChoosen = true;
+    } else {
+      placeChoosen = false;
+    }
+
     return (
       <nav className="navBar">
-        <Link to={'/start'}>
+        <Link to={placeChoosen ? '/?' + addressLocation +'&'+ addressPark : '/?' + addressLocation}>
           <button className="navOption">
             <img src={settingsIconUrl} alt="Settings icon" className="navOptionIcon" /><p>Search</p>
           </button>
         </Link>
-        <Link to={'/list'}>
+        <Link to={placeChoosen ? '/list/?' + addressLocation +'&'+ addressPark : '/list/?' + addressLocation}>
           <button className="navOption">
             <img src={listIconUrl} alt="List icon" className="navOptionIcon" /><p>List</p>
           </button>
         </Link>
-        <Link to={'/park'}>
+        <Link to={placeChoosen ? '/park/?' + addressLocation +'&'+ addressPark : '/park/?' + addressLocation}>
           <button className="navOption">
             <img src={parkIconUrl} alt="Theme park icon" className="navOptionIcon" /><p>Park</p>
           </button>
         </Link>
-        <Link to={'/map'}>
+        <Link to={placeChoosen ? '/map/?' + addressLocation +'&'+ addressPark : '/map/?' + addressLocation}>
           <button className="navOption">
             <img src={mapsIconUrl} alt="Maps icon" className="navOptionIcon" /><p>Map</p>
           </button>

@@ -10,7 +10,10 @@ class SiteHeader extends Component {
   render() {
     return (
       <header className="header">
-        <NavBar />
+        <NavBar 
+        	userLocation={this.props.userLocation}
+        	selectedPlace={this.props.selectedPlace} 
+        />
         <h1>Amusement Parks</h1>
       </header>
     )

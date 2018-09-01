@@ -133,18 +133,24 @@
   text-align: center;
   background-color: #555454;
   border-radius: 25px;
-  width: 90%;
+  width: 100%;
+  height: auto;
   margin: auto;
+}
+
+.listWindow-filters {
+  margin: 0;
+  width: 100%;
+  height: 20%;
 }
 
 .listWindow-list {
   margin: 0;
   padding: 0;
   width: 100%;
-  background-color: #555454;
+  height: 80%;
+  background-color: transparent;
   list-style-type: none;
-  min-height: 100px;
-  max-height: 480px;
   overflow-y: scroll;
   border-top: 1px solid #555454;
   border-bottom: 1px solid #555454;
@@ -152,9 +158,8 @@
 
 .listWindow-list-p {
   width: calc(100% - 18px);
-  border-radius: 25px 25px 0 0;
   border-bottom: none;
-  margin: 20px 0 0 0;
+  margin: 0;
   padding: 5px;
   border: solid 4px #555454;
   background-color: #323232;
@@ -340,10 +345,13 @@
 **************************/
     /* - width- */
 @media screen and (max-width: 600px) {
-  .searchSection, .sidebar, .infoWindow {
+  .searchSection, .listWindow, .infoWindow {
     width: 100%;
     height: calc(100% - 86px);
     border-bottom: 1px solid #fff;
+  }
+  .googleMap-styles {
+    height: calc(100% - 86px);
   }
   .navBar {
     position: fixed;

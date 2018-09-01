@@ -30,27 +30,32 @@ class ListSection extends Component {
 * Render part
 *******************************************/
 	render() {
+    var addressLocation = 'l=' + this.props.userLocation.lat +','+ this.props.userLocation.lng;
+    var addressPark = 'p=' + this.props.selectedPlace.place_id;
+
     return (
       <aside className="listWindow">
         <div className="listWindow-list-area">
-          <p id="searchLabel" className="listWindow-list-p">Parks in area:</p>
-          <input id="searchField" className="searchField" onChange={(e) => this.handleInput(e.target.value)} type="search" aria-labelledby="searchLabel" placeholder="Filter parks by name.." />
-          {this.props.googlePlacesError !== false &&
+          <div className="listWindow-filters">
+            <p id="searchLabel" className="listWindow-list-p">Parks in area:</p>
+            <input id="searchField" className="searchField" onChange={(e) => this.handleInput(e.target.value)} type="search" aria-labelledby="searchLabel" placeholder="Filter parks by name.." />
+            {this.props.googlePlacesError !== false &&
               <p className="listWindowErrorMessage">
                 {this.props.googlePlacesError}
               </p>
             }
             {this.props.unsplashError &&
               <p className="listWindowErrorMessage">
-                Request error, some/all images will not show.
+                Request error, some images might not show.
               </p>
             }
+          </div>
           <ul className="listWindow-list">
             {this.props.allParks.sort(sortBy('-rating'))
               .filter(park => park.name.toUpperCase().indexOf(this.props.query) > -1)
               .map((park, index) => {
                 return (
-                  <Link to={'/park'} key={ index } onKeyDown={(event) => this.listItemPress(event, park)}>
+                  <Link to={this.props.selectedPlace.id ? '/park/?' + addressLocation +'&'+ addressPark : '/park/?' + addressLocation} key={ index } onKeyDown={(event) => this.listItemPress(event, park)}>
                     <li className="listWindowListItem" onMouseOver={() => park.marker.setAnimation(window.google.maps.Animation.BOUNCE)} onMouseOut={() => park.marker.setAnimation(null)} onClick={() => this.props.onListItemClick(park)} tabIndex="0">
                       <img src={ park.photo ? park.photo.urls.small : noImage } alt={"Amusement park " + park.name} />
                       <div className="park-info">
