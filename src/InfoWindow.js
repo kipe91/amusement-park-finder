@@ -7,6 +7,7 @@ class ParkInfoSection extends Component {
 /*******************************************
 * Render part
 *******************************************/
+
 	render() {
 
     const openTimes = this.props.selectedPlace.opening_hours;
@@ -16,6 +17,13 @@ class ParkInfoSection extends Component {
       image = this.props.selectedPlace.photo.urls.regular;
     } else {
       image = noImage;
+    }
+
+    var directionBtn;
+    if (this.props.directionsTrue) {
+      directionBtn = <button id="directionBtn" className="directionBtn" onClick={() => this.props.onCalcRoute()}>Hide directions</button>;
+    } else {
+      directionBtn = <button id="directionBtn" className="directionBtn" onClick={() => this.props.onCalcRoute()}>Get driving directions</button>;
     }
 
     return (
@@ -38,7 +46,7 @@ class ParkInfoSection extends Component {
             <span className="infoSpan"><strong>Total rating: </strong><i>{this.props.selectedPlace.rating}</i></span>
           </p>
           <div className="directionsPart">
-            <button id="directionBtn" className="directionBtn" onClick={() => this.props.onCalcRoute()}>Get driving directions</button>
+            {directionBtn}
             <span id="directionDistance"></span>
             <span id="directionDuration"></span>
           </div>

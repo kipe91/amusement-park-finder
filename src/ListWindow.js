@@ -31,7 +31,6 @@ class ListSection extends Component {
 *******************************************/
 	render() {
     var addressLocation = 'l=' + this.props.userLocation.lat +','+ this.props.userLocation.lng;
-    var addressPark = 'p=' + this.props.selectedPlace.place_id;
 
     return (
       <aside className="listWindow">
@@ -55,7 +54,7 @@ class ListSection extends Component {
               .filter(park => park.name.toUpperCase().indexOf(this.props.query) > -1)
               .map((park, index) => {
                 return (
-                  <Link to={this.props.selectedPlace.id ? '/park/?' + addressLocation +'&'+ addressPark : '/park/?' + addressLocation} key={ index } onKeyDown={(event) => this.listItemPress(event, park)}>
+                  <Link to={'/park/?' + addressLocation +'&p='+ park.place_id} key={ index } onKeyDown={(event) => this.listItemPress(event, park)}>
                     <li className="listWindowListItem" onMouseOver={() => park.marker.setAnimation(window.google.maps.Animation.BOUNCE)} onMouseOut={() => park.marker.setAnimation(null)} onClick={() => this.props.onListItemClick(park)} tabIndex="0">
                       <img src={ park.photo ? park.photo.urls.small : noImage } alt={"Amusement park " + park.name} />
                       <div className="park-info">

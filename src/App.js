@@ -26,6 +26,7 @@ class App extends Component {
     query: '',
     startPlaceID: null,
     startPlaceTrue: false,
+    directionsTrue: false,
     //google services
     map: null,
     geocoder: null,
@@ -62,7 +63,7 @@ class App extends Component {
       }
     }
     else {
-      this.getUserLocation();
+      this.getUserLocation(true);
     }
   }
 
@@ -86,14 +87,14 @@ class App extends Component {
 
 //----------------
 
-  getUserLocation = () => {
+  getUserLocation = (getParks) => {
   /* Set users location with info from geolocation */
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           var lat = position.coords.latitude;
           var lng = position.coords.longitude;
           this.setState({ userLocation: {lat, lng} });
-          if (!this.state.startPlaceTrue) {
+          if (!getParks) {
             this.getParks();
           }
         });
@@ -113,6 +114,10 @@ class App extends Component {
     this.setState({
       selectedPlace: park
     });
+
+    if (this.state.directionsTrue) {
+      this.calcRoute(); //to hide old directions
+    }
   }
 
 //----------------
@@ -134,23 +139,33 @@ class App extends Component {
   calcRoute= () => {
   /* Shows driving directions on map */
     if (this.state.selectedPlace.geometry) {
-      var start = this.state.userLocation;
-      var end = this.state.selectedPlace.geometry.location;
-      var request = {
-        origin: start,
-        destination: end,
-        travelMode: 'DRIVING',
-        unitSystem: window.google.maps.UnitSystem.METRIC
-      };
-      this.state.directionsService.route(request, (result, status) => {
-        if (status == 'OK') {
-          var directionDistance = document.getElementById('directionDistance');
-          var directionDuration = document.getElementById('directionDuration');
-          directionDistance.innerHTML = '<br />Distance: ' + result.routes[0].legs[0].distance.text;
-          directionDuration.innerHTML = '<br />Duration: ' + result.routes[0].legs[0].duration.text;
-          this.state.directionsDisplay.setDirections(result);
-        }
-      });
+      var directionDistance = document.getElementById('directionDistance');
+      var directionDuration = document.getElementById('directionDuration');
+      if (this.state.directionsTrue) {
+        this.state.directionsDisplay.setMap(null);
+        this.setState({ directionsTrue: false});
+        directionDistance.innerHTML = '';
+        directionDuration.innerHTML = '';
+      }
+      else {
+        var start = this.state.userLocation;
+        var end = this.state.selectedPlace.geometry.location;
+        var request = {
+          origin: start,
+          destination: end,
+          travelMode: 'DRIVING',
+          unitSystem: window.google.maps.UnitSystem.METRIC
+        };
+        this.state.directionsService.route(request, (result, status) => {
+          if (status == 'OK') {
+            directionDistance.innerHTML = '<br />Distance: ' + result.routes[0].legs[0].distance.text;
+            directionDuration.innerHTML = '<br />Duration: ' + result.routes[0].legs[0].duration.text;
+            this.state.directionsDisplay.setMap(this.state.map);
+            this.state.directionsDisplay.setDirections(result);
+            this.setState({ directionsTrue: true });
+          }
+        });
+      }
     }
   }
 
@@ -376,8 +391,9 @@ class App extends Component {
           <ParkInfoSection
             //functions
             onCalcRoute={this.calcRoute}
-            //parks
+            //props
             selectedPlace={this.state.selectedPlace}
+            directionsTrue={this.state.directionsTrue}
           />
         )}/>
 
