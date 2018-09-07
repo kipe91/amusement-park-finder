@@ -46,19 +46,20 @@ class App extends Component {
 
   componentDidMount() {
   /* Check if any info is provided in browser adress bar */
-    var params = window.location.search.substring(1).split("&");
-    if (params[0] !== "") {
-      var position = params[0].split("=");
-      var latLng = position[1].split(",");
+    var paramsString = window.location.search;
+    var searchParams = new URLSearchParams(paramsString);
+    var parkID = searchParams.get("p");
+    var latLngLocation = searchParams.get("l");
+    
+    if ((latLngLocation !== "") && (latLngLocation !== null)) {
+      var latLng = latLngLocation.split(",");
       var lat = latLng[0];
       var lng = latLng[1];
       if (lat && lng) {
         //this.setState({ userLocation: {lat, lng} });
       }
 
-      if (params[1] !== undefined && params[1] !== "") {
-        var park = params[1].split("=");
-        var parkID = park[1];
+      if ((parkID !== "") && (parkID !== null)) {
         this.setState({startPlaceID: parkID, startPlaceTrue: true});
       }
     }
@@ -173,7 +174,6 @@ class App extends Component {
 
   startPark = () => {
   /* Sets the initinal park if any */
-    console.log(this.state.startPlaceID);
     var startRequest = {
       placeId: this.state.startPlaceID,
       fields: ['name', 'geometry', 'opening_hours', 'website', 'formatted_address', 'formatted_phone_number', 'review']
@@ -362,7 +362,7 @@ class App extends Component {
           onMenuToggler={this.menuToggler}
         />
 
-        <Route exact path="/" render={() => (
+        <Route exact path="/amusement-park-finder/" render={() => (
           <FilterSearch
             //functions
             onUpdateLocation={this.updateLocation}
@@ -370,7 +370,7 @@ class App extends Component {
           />
         )}/>
 
-        <Route path="/list" render={() => (
+        <Route path="/amusement-park-finder/list" render={() => (
           <ListSection
             //state
             userLocation={this.state.userLocation}
@@ -387,7 +387,7 @@ class App extends Component {
           />
         )}/>
 
-        <Route path="/park" render={() => (
+        <Route path="/amusement-park-finder/park" render={() => (
           <ParkInfoSection
             //functions
             onCalcRoute={this.calcRoute}

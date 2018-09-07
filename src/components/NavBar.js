@@ -35,22 +35,22 @@ keyPressed = (event) => {
 
     return (
       <nav className="navBar">
-        <Link to={placeChoosen ? '/?' + addressLocation +'&'+ addressPark : '/?' + addressLocation}>
+        <Link to={placeChoosen ? '/amusement-park-finder/?' + addressLocation +'&'+ addressPark : '/amusement-park-finder/?' + addressLocation}>
           <button className="navOption">
             <img src={settingsIconUrl} alt="Settings icon" className="navOptionIcon" /><p>Search</p>
           </button>
         </Link>
-        <Link to={placeChoosen ? '/list/?' + addressLocation +'&'+ addressPark : '/list/?' + addressLocation}>
+        <Link to={placeChoosen ? '/amusement-park-finder/list/?' + addressLocation +'&'+ addressPark : '/amusement-park-finder/list/?' + addressLocation}>
           <button className="navOption">
             <img src={listIconUrl} alt="List icon" className="navOptionIcon" /><p>List</p>
           </button>
         </Link>
-        <Link to={placeChoosen ? '/park/?' + addressLocation +'&'+ addressPark : '/park/?' + addressLocation}>
+        <Link to={placeChoosen ? '/amusement-park-finder/park/?' + addressLocation +'&'+ addressPark : '/amusement-park-finder/park/?' + addressLocation}>
           <button className="navOption">
             <img src={parkIconUrl} alt="Theme park icon" className="navOptionIcon" /><p>Park</p>
           </button>
         </Link>
-        <Link to={placeChoosen ? '/map/?' + addressLocation +'&'+ addressPark : '/map/?' + addressLocation}>
+        <Link to={placeChoosen ? '/amusement-park-finder/map/?' + addressLocation +'&'+ addressPark : '/amusement-park-finder/map/?' + addressLocation}>
           <button className="navOption">
             <img src={mapsIconUrl} alt="Maps icon" className="navOptionIcon" /><p>Map</p>
           </button>
